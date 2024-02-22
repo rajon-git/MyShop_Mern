@@ -9,7 +9,13 @@ const authRouter = require("./routes/authRoute");
 
 dbConnect();
 
-app.use('api/user', authRouter);
+// Use express.json() and express.urlencoded() instead of bodyParser
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
+// Fix the route definition
+app.use('/api/user', authRouter);
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
