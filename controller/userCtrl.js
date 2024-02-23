@@ -49,7 +49,7 @@ const getallUsers = asyncHandler(async(req,res)=>{
 //update user controller
 
 const updateUser = asyncHandler(async(req,res)=>{
-  const {id} = req.params;
+  const {id} = req.user;
     const updateUser =  await User.findByIdAndUpdate(id, {
       firstName : req?.body?.firstName,
       lastName : req?.body?.lastName,
