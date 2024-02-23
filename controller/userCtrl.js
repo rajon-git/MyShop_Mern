@@ -46,6 +46,26 @@ const getallUsers = asyncHandler(async(req,res)=>{
    }
 })
 
+//update user controller
+
+const updateUser = asyncHandler(async(req,res)=>{
+  const {id} = req.params;
+    const updateUser =  await User.findByIdAndUpdate(id, {
+      firstName : req?.body?.firstName,
+      lastName : req?.body?.lastName,
+      mobile: req?.body?.mobile,
+      email: req?.body?.email,
+    },{
+      new:true
+    });
+    res.json(updateUser);
+  try {
+    
+  } catch (error) {
+    throw new Error(error);
+  }
+})
+
 //get a single user controller
 
 const getaUser = asyncHandler(async(req,res)=>{
@@ -70,4 +90,4 @@ const deleteUser = asyncHandler(async(req,res)=>{
   }
 })
 
-module.exports = {createUser,loginUserCtrl, getallUsers, getaUser, deleteUser};
+module.exports = {createUser,loginUserCtrl, getallUsers, getaUser, deleteUser,updateUser};
