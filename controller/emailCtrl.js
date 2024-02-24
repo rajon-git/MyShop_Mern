@@ -13,7 +13,7 @@ const sendEmail = asyncHandler(async(data,req,res)=>{
     });
 
     let info = await transporter.sendMail({
-        from: '"Hey" <rajon.zhsust15@gmail.com>',
+        from: '"Hey" <rajon.charteredskills@gmail.com>',
         to: data.to,
         subject: data.subject,
         text: data.text,
