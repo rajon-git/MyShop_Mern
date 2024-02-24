@@ -20,7 +20,7 @@ const createUser = asyncHandler(async(req,res)=>{
     }
 });
 
-const loginUserCtrl = asyncHandler(async (req, res) =>{
+const loginUserCtrl = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   // check if user exists or not
   const findUser = await User.findOne({ email });
@@ -50,6 +50,8 @@ const loginUserCtrl = asyncHandler(async (req, res) =>{
   }
 });
 
+//handle refresh token controller
+
 const handleRefreshToken = asyncHandler(async (req, res) => {
   const cookie = req.cookies;
   if (!cookie?.refreshToken) throw new Error("No Refresh Token in Cookies");
@@ -63,6 +65,30 @@ const handleRefreshToken = asyncHandler(async (req, res) => {
     const accessToken = generateToken(user?._id);
     res.json({ accessToken });
   });
+});
+
+//logou controller
+
+const logout = asyncHandler(async (req, res) => {
+  const cookie = req.cookies;
+  if (!cookie?.refreshToken) throw new Error("No Refresh Token in Cookies");
+  const refreshToken = cookie.refreshToken;
+  const user = await User.findOne({ refreshToken });
+  if (!user) {
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: true,
+    });
+    return res.sendStatus(204); // forbidden
+  }
+  await User.findOneAndUpdate({refreshToken}, {
+    refreshToken: "",
+  });
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: true,
+  });
+  res.sendStatus(204); // forbidden
 });
 
 //get all user controller
@@ -122,6 +148,8 @@ const deleteUser = asyncHandler(async(req,res)=>{
   }
 })
 
+//block controller add
+
 const blockUser = asyncHandler(async(req,res)=>{
   const {id} = req.params;
   validateMongoDbId(id);
@@ -136,6 +164,9 @@ const blockUser = asyncHandler(async(req,res)=>{
     throw new Error(error);
   }
 });
+
+//unblock controller create
+
 const unblockUser = asyncHandler(async(req,res)=>{
   const {id} = req.params;
   validateMongoDbId(id);
@@ -151,4 +182,4 @@ const unblockUser = asyncHandler(async(req,res)=>{
   }
 });
 
-module.exports = {createUser,loginUserCtrl, getallUsers, getaUser, deleteUser,updateUser,handleRefreshToken, blockUser, unblockUser};
+module.exports = {createUser,loginUserCtrl, getallUsers, getaUser, logout,deleteUser,updateUser,handleRefreshToken, blockUser, unblockUser};
