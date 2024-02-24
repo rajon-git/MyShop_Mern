@@ -67,7 +67,7 @@ const handleRefreshToken = asyncHandler(async (req, res) => {
   });
 });
 
-//logou controller
+//logout controller
 
 const logout = asyncHandler(async (req, res) => {
   const cookie = req.cookies;
@@ -182,4 +182,32 @@ const unblockUser = asyncHandler(async(req,res)=>{
   }
 });
 
-module.exports = {createUser,loginUserCtrl, getallUsers, getaUser, logout,deleteUser,updateUser,handleRefreshToken, blockUser, unblockUser};
+//update password
+
+const updatePassword = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  const { password } = req.body;
+  validateMongoDbId(_id);
+  const user = await User.findById(_id);
+  if (password) {
+    user.password = password;
+    const updatedPassword = await user.save();
+    res.json(updatedPassword);
+  } else {
+    res.json(user);
+  }
+});
+
+module.exports = {
+                 createUser,
+                 loginUserCtrl, 
+                 getallUsers, 
+                 getaUser, 
+                 logout,
+                 deleteUser,
+                 updateUser,
+                 handleRefreshToken, 
+                 blockUser, 
+                 unblockUser,
+                 updatePassword
+                };
