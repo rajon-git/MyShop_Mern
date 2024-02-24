@@ -23,4 +23,15 @@ const getaproduct = asyncHandler(async(req,res)=>{
     }
 })
 
-module.exports = {createProduct,getaproduct}
+//get all produxt
+
+const getallProduct = asyncHandler(async(req,res)=>{
+    try {
+        const getallProduct = await Product.find();
+        res.json(getallProduct);
+    } catch (error) {
+        throw new Error(error);
+    }
+})
+
+module.exports = {createProduct,getaproduct,getallProduct}
