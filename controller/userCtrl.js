@@ -3,6 +3,7 @@ const User = require("../model/userModel");
 const asyncHandler = require("express-async-handler");
 const validateMongoDbId = require("../utils/validateMongodbId");
 const { generateRefreshToken } = require("../config/refreshtoken");
+const jwt = require("jsonwebtoken");
 
 const createUser = asyncHandler(async(req,res)=>{
     const email = req.body.email;
@@ -49,10 +50,20 @@ const loginUserCtrl = asyncHandler(async (req, res) =>{
   }
 });
 
-const handleRefreshToken = asyncHandler(async(req,res)=>{
-  const cookie =req.cookies;
-  console.log(cookie);
-})
+const handleRefreshToken = asyncHandler(async (req, res) => {
+  const cookie = req.cookies;
+  if (!cookie?.refreshToken) throw new Error("No Refresh Token in Cookies");
+  const refreshToken = cookie.refreshToken;
+  const user = await User.findOne({ refreshToken });
+  if (!user) throw new Error(" No Refresh token present in db or not matched");
+  jwt.verify(refreshToken, process.env.JWT_SECRET, (err, decoded) => {
+    if (err || user.id !== decoded.id) {
+      throw new Error("There is something wrong with refresh token");
+    }
+    const accessToken = generateToken(user?._id);
+    res.json({ accessToken });
+  });
+});
 
 //get all user controller
 
