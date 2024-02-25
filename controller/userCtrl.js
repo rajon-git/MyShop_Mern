@@ -202,21 +202,38 @@ const updatePassword = asyncHandler(async (req, res) => {
 const forgotPasswordToken = asyncHandler(async (req, res) => {
   const { email } = req.body;
   const user = await User.findOne({ email });
-  if (!user) throw new Error("User not found with this email");
+
+  if (!user) {
+      res.status(404).json({
+          status: "fail",
+          message: "User not found with this email",
+      });
+      return;
+  }
+
   try {
-    const token = await user.createPasswordResetToken();
-    await user.save();
-    const resetURL = `Hi, Please follow this link to reset Your Password. This link is valid till 10 minutes from now. <a href='http://localhost:5000/api/user/reset-password/${token}'>Click Here</>`;
-    const data = {
-      to: email,
-      text: "Hey User",
-      subject: "Forgot Password Link",
-      htm: resetURL,
-    };
-    sendEmail(data);
-    res.json(token);
+      const token = await user.createPasswordResetToken();
+      await user.save();
+      const resetURL = `Hi, Please follow this link to reset Your Password. This link is valid till 10 minutes from now. <a href='http://localhost:5000/api/user/reset-password/${token}'>Click Here</a>`;
+      const data = {
+          to: email,
+          text: "Hey User",
+          subject: "Forgot Password Link",
+          htm: resetURL,
+      };
+
+      await sendEmail(data);
+
+      res.json({
+          status: "success",
+          message: "Password reset link sent successfully",
+      });
   } catch (error) {
-    throw new Error(error);
+      console.error("Error in forgotPasswordToken:", error);
+      res.status(500).json({
+          status: "fail",
+          message: "Internal Server Error",
+      });
   }
 });
 
