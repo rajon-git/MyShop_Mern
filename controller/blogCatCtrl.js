@@ -24,4 +24,15 @@ const updateCategory = asyncHandler(async(req,res)=>{
     }
 });
 
-module.exports = {createCategory, updateCategory}
+const deleteCategory = asyncHandler(async(req,res)=>{
+    const {id} = req.params;
+    validateMongoDbId(id);
+    try {
+        const deleteCategory = await Category.findByIdAndDelete(id);
+        res.json(deleteCategory);
+    } catch (error) {
+        throw new Error(error);
+    }
+});
+
+module.exports = {createCategory, updateCategory, deleteCategory}
