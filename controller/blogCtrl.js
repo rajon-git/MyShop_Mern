@@ -1,5 +1,5 @@
 const Blog = require("../model/blogModel");
-const user = require("../model/userModel");
+const User = require("../model/userModel");
 const asyncHandler = require("express-async-handler");
 const validateMongoDbId = require("../utils/validateMongodbId");
 
