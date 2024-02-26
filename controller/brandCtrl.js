@@ -24,6 +24,17 @@ const createBrand = asyncHandler(async (req, res) => {
     }
   });
 
+  const deleteBrand = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    validateMongoDbId(id);
+    try {
+      const deletedBrand = await Brand.findByIdAndDelete(id);
+      res.json(deletedBrand);
+    } catch (error) {
+      throw new Error(error);
+    }
+  });
+
 module.exports = {
     createBrand,
     updateBrand,
