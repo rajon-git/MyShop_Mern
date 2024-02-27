@@ -161,35 +161,34 @@ const dislikeBlog = asyncHandler(async (req, res) => {
   const uploadImges = asyncHandler(async (req, res) => {
     const { id } = req.params;
     validateMongoDbId(id);
-  
     try {
-      const uploader = (path) => cloudinaryUploadImg(path, "images");
-      const urls = [];
-      const files = req.files;
-  
-      for (const file of files) {
-        const { path } = file;
-        const newpath = await uploader(path);
-        urls.push(newpath);
-        fs.unlinkSync(path);
-      }
-  
-      const findBlog = await Blog.findByIdAndUpdate(
-        id,
-        {
-          $push: { images: { $each: urls } },
-        },
-        {
-          new: true,
+        const uploader = (path) => cloudinaryUploadImg(path, "images");
+        const urls = [];
+        const files = req.files;
+        for (const file of files) {
+          const { path } = file;
+          const newpath = await uploader(path);
+          urls.push(newpath);
+          fs.unlinkSync(path);
         }
-      );
-  
-      res.json(findBlog);
+    
+        const findBlog = await Blog.findByIdAndUpdate(
+          id,
+          {
+            $push: { images: { $each: urls } },
+          },
+          {
+            new: true,
+          }
+        );
+        res.json(findBlog);
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ status: "fail", message: "Internal Server Error" });
+      console.error('Error processing image upload:', error);
+      res.status(500).json({ status: 'fail', message: 'Internal Server Error', error: error.message });
     }
   });
+  
+  
 
 module.exports = {
     createBlog,
