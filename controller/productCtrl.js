@@ -2,6 +2,8 @@ const slugify  = require("slugify");
 const Product = require("../model/productModel");
 const asyncHandler = require("express-async-handler");
 const User = require("../model/userModel");
+const validateMongoDbId = require("../utils/validateMongodbId");
+const cloudinaryUploadImg = require("../utils/cloudinary");
 
 //create product
 const createProduct = asyncHandler(async (req, res) => {
@@ -206,4 +208,66 @@ const updateProduct = asyncHandler(async (req, res) => {
     }
   });
 
-module.exports = {createProduct,getaproduct,getallProduct, updateProduct, deleteProduct, addToWishlist, rating}
+  // const uploadImges=asyncHandler(async(req,res)=>{
+  //   const {id} = req.params;
+  //   validateMongoDbId(id);
+  //   try {
+  //     const uploader = (path)=> cloudinaryUploadImg(path, "images");
+  //     const urls=[];
+  //     const files = req.files;
+  //     for(const file of files){
+  //       const {path} = file;
+  //       const newpath = await uploader(path);
+  //       urls.push(newpath);
+  //     }
+  //     const findProduct = await Product.findByIdAndUpdate(id,{
+  //       images: urls.map((file)=> {return file},{
+  //         new:true
+  //       }),
+  //     });
+  //     res.json(findProduct);
+  //   } catch (error) {
+  //     throw new Error(error);
+  //   }
+  // })
+
+  const uploadImges = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    validateMongoDbId(id);
+  
+    try {
+      const uploader = (path) => cloudinaryUploadImg(path, "images");
+      const urls = [];
+      const files = req.files;
+  
+      for (const file of files) {
+        const { path } = file;
+        const newpath = await uploader(path);
+        urls.push(newpath);
+      }
+  
+      const findProduct = await Product.findByIdAndUpdate(
+        id,
+        {
+          $push: { images: { $each: urls } },
+        },
+        {
+          new: true,
+        }
+      );
+  
+      res.json(findProduct);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ status: "fail", message: "Internal Server Error" });
+    }
+  });
+module.exports = {
+    createProduct,
+    getaproduct,
+    getallProduct, 
+    updateProduct, 
+    deleteProduct, 
+    addToWishlist, 
+    rating,
+    uploadImges}
