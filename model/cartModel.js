@@ -14,11 +14,7 @@ var cartSchema = new mongoose.Schema({
         }, 
     ],
     cartTotal: Number,
-    orderStatus: {
-        type:String,
-        default: "Not Processed",
-        enum: ["Not Processed", "Cash on Delivery","Processing","Dispatch","Cancelled", "Deliveried"]
-    },
+    totalAfterDiscout: Number,
     orderBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"

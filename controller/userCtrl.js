@@ -319,6 +319,10 @@ const getWishList = asyncHandler(async(req,res)=>{
   } catch (error) {
     throw new Error(error);
   }
+});
+
+const userCart = asyncHandler(async(req,res)=>{
+  res.send("Hello from cart");
 })
 
 module.exports = {
@@ -337,5 +341,6 @@ module.exports = {
                  resetPassword,
                  loginAdmin,
                  getWishList,
-                 saveAddress
+                 saveAddress,
+                 userCart
                 };
