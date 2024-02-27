@@ -2,6 +2,7 @@ const Blog = require("../model/blogModel");
 const User = require("../model/userModel");
 const asyncHandler = require("express-async-handler");
 const validateMongoDbId = require("../utils/validateMongodbId");
+const cloudinaryUploadImg = require("../utils/cloudinary");
 
 
 const createBlog = asyncHandler(async(req,res)=>{
@@ -156,6 +157,38 @@ const dislikeBlog = asyncHandler(async (req, res) => {
     }
   });
 
+  const uploadImges = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    validateMongoDbId(id);
+  
+    try {
+      const uploader = (path) => cloudinaryUploadImg(path, "images");
+      const urls = [];
+      const files = req.files;
+  
+      for (const file of files) {
+        const { path } = file;
+        const newpath = await uploader(path);
+        urls.push(newpath);
+      }
+  
+      const findBlog = await Blog.findByIdAndUpdate(
+        id,
+        {
+          $push: { images: { $each: urls } },
+        },
+        {
+          new: true,
+        }
+      );
+  
+      res.json(findBlog);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ status: "fail", message: "Internal Server Error" });
+    }
+  });
+
 module.exports = {
     createBlog,
     updateBlog, 
@@ -163,4 +196,5 @@ module.exports = {
     getAllBlog, 
     deleteBlog, 
     likeBlog, 
-    dislikeBlog};
+    dislikeBlog,
+    uploadImges};
