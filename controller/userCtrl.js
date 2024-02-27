@@ -126,6 +126,8 @@ const logout = asyncHandler(async (req, res) => {
   res.sendStatus(204); // forbidden
 });
 
+
+
 //get all user controller
 
 const getallUsers = asyncHandler(async(req,res)=>{
@@ -157,6 +159,26 @@ const updateUser = asyncHandler(async(req,res)=>{
     throw new Error(error);
   }
 })
+
+const saveAddress = asyncHandler(async (req, res, next) => {
+  const { _id } = req.user;
+  validateMongoDbId(_id);
+
+  try {
+    const addressupdate = await User.findByIdAndUpdate(
+      _id,
+      {
+        address: req?.body?.address,
+      },
+      {
+        new: true,
+      }
+    );
+    res.json(addressupdate);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
 
 //get a single user controller
 
@@ -314,5 +336,6 @@ module.exports = {
                  forgotPasswordToken,
                  resetPassword,
                  loginAdmin,
-                 getWishList
+                 getWishList,
+                 saveAddress
                 };
