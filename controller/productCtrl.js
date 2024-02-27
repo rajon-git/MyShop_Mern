@@ -235,7 +235,6 @@ const updateProduct = asyncHandler(async (req, res) => {
   const uploadImges = asyncHandler(async (req, res) => {
     const { id } = req.params;
     validateMongoDbId(id);
-  
     try {
       const uploader = (path) => cloudinaryUploadImg(path, "images");
       const urls = [];

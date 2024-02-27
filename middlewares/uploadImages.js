@@ -78,12 +78,10 @@ const productImgResize = async (req, res, next) => {
 
 const blogImgResize = async (req, res, next) => {
   if (!req.files) return next();
-
   try {
     await Promise.all(
       req.files.map(async (file) => {
         const outputPath = `public/images/blogs/${file.filename}`;
-
         // Resize image
         await imagemagick.resize({
           srcPath: file.path,
