@@ -35,8 +35,9 @@ router.get("/wishlist",authMiddleware, getWishList);
 
 router.get("/:id",authMiddleware,isAdmin, getaUser);
 router.delete("/:id",deleteUser);
+
+router.put("/edit-user",authMiddleware,updateUser);
 router.put("/save-address", authMiddleware, saveAddress);
-router.put("/:id",authMiddleware,updateUser);
 
 router.put("/block-user/:id",authMiddleware,isAdmin,blockUser);
 router.put("/unblock-user/:id",authMiddleware,isAdmin,unblockUser);
