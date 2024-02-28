@@ -333,7 +333,7 @@ const userCart = asyncHandler(async (req, res) => {
     let products = [];
     const user = await User.findById(_id);
     // check if user already have product in cart
-    const alreadyExistCart = await Cart.findOne({ orderBy: user._id });
+    const alreadyExistCart = await Cart.findOne({ orderby: _id });
     if (alreadyExistCart) {
       alreadyExistCart.remove();
     }
@@ -365,7 +365,19 @@ const getUsercart = asyncHandler(async (req, res) => {
   const { _id } = req.user;
   validateMongoDbId(_id);
   try {
-    const cart = await Cart.findOne({ orderBy: _id });
+    const cart = await Cart.findOne({ orderby: _id });
+    res.json(cart);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+const emptyCart = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  validateMongoDbId(_id);
+  try {
+    const user = await User.findOne({ _id });
+    const cart = await Cart.findOneAndDelete({ orderby: user._id });
     res.json(cart);
   } catch (error) {
     throw new Error(error);
@@ -390,5 +402,6 @@ module.exports = {
                  getWishList,
                  saveAddress,
                  userCart,
-                 getUsercart
+                 getUsercart,
+                 emptyCart
                 };
