@@ -324,45 +324,53 @@ const getWishList = asyncHandler(async(req,res)=>{
 });
 
 //add to cart
-const userCart = asyncHandler(async(req,res)=>{
-  const {cart} = req.body;
-  const {_id} = req.user;
+
+const userCart = asyncHandler(async (req, res) => {
+  const { cart } = req.body;
+  const { _id } = req.user;
   validateMongoDbId(_id);
   try {
     let products = [];
     const user = await User.findById(_id);
-
-    //check if user already have a product in cart
-    const alreadyExistsCart = await Cart.findOne({orderBy: user._id});
-    if(alreadyExistsCart)
-    {
-      alreadyExistsCart.remove();
+    // check if user already have product in cart
+    const alreadyExistCart = await Cart.findOne({ orderBy: user._id });
+    if (alreadyExistCart) {
+      alreadyExistCart.remove();
     }
-    for(let i=0;i<cart.length;i++)
-    {
-       let object = {};
-       object.product = cart[i]._id;
-       object.count = cart[i].count;
-       object.color = cart[i].color;
-       let getPrice = await Product.findById(cart[i]._id).select("price").exec();
-       object.price = getPrice.price;
-       products.push(object);
+    for (let i = 0; i < cart.length; i++) {
+      let object = {};
+      object.product = cart[i]._id;
+      object.count = cart[i].count;
+      object.color = cart[i].color;
+      let getPrice = await Product.findById(cart[i]._id).select("price").exec();
+      object.price = getPrice.price;
+      products.push(object);
     }
     let cartTotal = 0;
-    for(let i=0;i<products.length;i++)
-    {
-      cartTotal = cartTotal+products[i].price * products[i].count;
+    for (let i = 0; i < products.length; i++) {
+      cartTotal = cartTotal + products[i].price * products[i].count;
     }
     let newCart = await new Cart({
       products,
       cartTotal,
-      orderBy: user?._id
+      orderby: user?._id,
     }).save();
     res.json(newCart);
   } catch (error) {
     throw new Error(error);
   }
-})
+});
+
+const getUsercart = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  validateMongoDbId(_id);
+  try {
+    const cart = await Cart.findOne({ orderBy: _id });
+    res.json(cart);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
 
 module.exports = {
                  createUser,
@@ -381,5 +389,6 @@ module.exports = {
                  loginAdmin,
                  getWishList,
                  saveAddress,
-                 userCart
+                 userCart,
+                 getUsercart
                 };
