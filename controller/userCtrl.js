@@ -6,6 +6,8 @@ const { generateRefreshToken } = require("../config/refreshtoken");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const sendEmail = require("./emailCtrl");
+const Product = require("../model/productModel");
+const Cart = require("../model/cartModel");
 
 const createUser = asyncHandler(async(req,res)=>{
     const email = req.body.email;
@@ -321,8 +323,45 @@ const getWishList = asyncHandler(async(req,res)=>{
   }
 });
 
+//add to cart
 const userCart = asyncHandler(async(req,res)=>{
-  res.send("Hello from cart");
+  const {cart} = req.body;
+  const {_id} = req.user;
+  validateMongoDbId(_id);
+  try {
+    let products = [];
+    const user = await User.findById(_id);
+
+    //check if user already have a product in cart
+    const alreadyExistsCart = await Cart.findOne({orderBy: user._id});
+    if(alreadyExistsCart)
+    {
+      alreadyExistsCart.remove();
+    }
+    for(let i=0;i<cart.length;i++)
+    {
+       let object = {};
+       object.product = cart[i]._id;
+       object.count = cart[i].count;
+       object.color = cart[i].color;
+       let getPrice = await Product.findById(cart[i]._id).select("price").exec();
+       object.price = getPrice.price;
+       products.push(object);
+    }
+    let cartTotal = 0;
+    for(let i=0;i<products.length;i++)
+    {
+      cartTotal = cartTotal+products[i].price * products[i].count;
+    }
+    let newCart = await new Cart({
+      products,
+      cartTotal,
+      orderBy: user?._id
+    }).save();
+    res.json(newCart);
+  } catch (error) {
+    throw new Error(error);
+  }
 })
 
 module.exports = {
