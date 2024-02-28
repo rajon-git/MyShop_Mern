@@ -2,8 +2,7 @@ const slugify  = require("slugify");
 const Product = require("../model/productModel");
 const asyncHandler = require("express-async-handler");
 const User = require("../model/userModel");
-const validateMongoDbId = require("../utils/validateMongodbId");
-const cloudinaryUploadImg = require("../utils/cloudinary");
+const {cloudinaryUploadImg,cloudinaryDeleteImg} = require("../utils/cloudinary");
 const fs = require("fs");
 
 //create product
@@ -263,6 +262,17 @@ const updateProduct = asyncHandler(async (req, res) => {
       res.status(500).json({ status: "fail", message: "Internal Server Error" });
     }
   });
+
+  const deleteImges = asyncHandler(async (req, res) => {
+    const {id} = req.params;
+    try {
+      cloudinaryDeleteImg(id, "images");
+      res.json({message: "Deleted"});
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ status: "fail", message: "Internal Server Error" });
+    }
+  });
 module.exports = {
     createProduct,
     getaproduct,
@@ -271,4 +281,6 @@ module.exports = {
     deleteProduct, 
     addToWishlist, 
     rating,
-    uploadImges}
+    uploadImges,
+    deleteImges
+  }
