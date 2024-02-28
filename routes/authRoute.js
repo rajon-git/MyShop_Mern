@@ -21,14 +21,16 @@ const {
     emptyCart,
     applyCoupon,
     createOrder,
-    getOrders
+    getOrders,
+    updateOrderStatus
 } = require("../controller/userCtrl");
 const {authMiddleware, isAdmin} = require("../middlewares/authMiddleware");
 const router = express.Router();
 
 router.post("/register", createUser);
 router.post("/forgot-password-token", forgotPasswordToken);
-router.post("/reset-password/:token", resetPassword);
+router.put("/reset-password/:token", resetPassword);
+router.put("/order/update-order/:id",authMiddleware,isAdmin, updateOrderStatus);
 
 router.put("/password",authMiddleware, updatePassword);
 router.post("/login",loginUserCtrl);
