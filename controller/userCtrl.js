@@ -9,6 +9,8 @@ const sendEmail = require("./emailCtrl");
 const Product = require("../model/productModel");
 const Cart = require("../model/cartModel");
 const Coupon = require("../model/couponModel");
+const Order = require("../model/orderModel");
+const uniqid =require("uniqid");
 
 const createUser = asyncHandler(async(req,res)=>{
     const email = req.body.email;
@@ -413,6 +415,49 @@ const applyCoupon = asyncHandler(async (req, res) => {
   res.json(totalAfterDiscount);
 });
 
+const createOrder = asyncHandler(async (req, res) => {
+  const { COD, couponApplied } = req.body;
+  const { _id } = req.user;
+  validateMongoDbId(_id);
+  try {
+    if (!COD) throw new Error("Create cash order failed");
+    const user = await User.findById(_id);
+    let userCart = await Cart.findOne({ orderby: user._id });
+    let finalAmout = 0;
+    if (couponApplied && userCart.totalAfterDiscount) {
+      finalAmout = userCart.totalAfterDiscount;
+    } else {
+      finalAmout = userCart.cartTotal;
+    }
+
+    let newOrder = await new Order({
+      products: userCart.products,
+      paymentIntent: {
+        id: uniqid(),
+        method: "COD",
+        amount: finalAmout,
+        status: "Cash on Delivery",
+        created: Date.now(),
+        currency: "usd",
+      },
+      orderby: user._id,
+      orderStatus: "Cash on Delivery",
+    }).save();
+    let update = userCart.products.map((item) => {
+      return {
+        updateOne: {
+          filter: { _id: item.product._id },
+          update: { $inc: { quantity: -item.count, sold: +item.count } },
+        },
+      };
+    });
+    const updated = await Product.bulkWrite(update, {});
+    res.json({ message: "success" });
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
 module.exports = {
                  createUser,
                  loginUserCtrl, 
@@ -433,5 +478,6 @@ module.exports = {
                  userCart,
                  getUsercart,
                  emptyCart,
-                 applyCoupon
+                 applyCoupon,
+                 createOrder
                 };
