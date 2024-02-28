@@ -233,8 +233,6 @@ const updateProduct = asyncHandler(async (req, res) => {
   // })
 
   const uploadImges = asyncHandler(async (req, res) => {
-    const { id } = req.params;
-    validateMongoDbId(id);
     try {
       const uploader = (path) => cloudinaryUploadImg(path, "images");
       const urls = [];
@@ -246,18 +244,20 @@ const updateProduct = asyncHandler(async (req, res) => {
         urls.push(newpath);
         fs.unlinkSync(path);
       }
+      const images = urls.map((file)=>{
+        return file
+      });
+       res.json(images);
+      // const findProduct = await Product.findByIdAndUpdate(
+      //   id,
+      //   {
+      //     $push: { images: { $each: urls } },
+      //   },
+      //   {
+      //     new: true,
+      //   }
+      // );
   
-      const findProduct = await Product.findByIdAndUpdate(
-        id,
-        {
-          $push: { images: { $each: urls } },
-        },
-        {
-          new: true,
-        }
-      );
-  
-      res.json(findProduct);
     } catch (error) {
       console.error(error);
       res.status(500).json({ status: "fail", message: "Internal Server Error" });
