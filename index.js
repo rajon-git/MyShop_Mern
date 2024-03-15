@@ -3,6 +3,7 @@ const dbConnect = require('./config/dbConnect');
 const mongoose = require("mongoose");
 const app = express();
 const cookieParser = require("cookie-parser");
+const cors = require("cors");
 require("dotenv").config();
 const port = process.env.PORT || 4000;
 
@@ -22,6 +23,7 @@ const morgan = require("morgan");
 dbConnect();
 
 app.use(morgan("dev"));
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
