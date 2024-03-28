@@ -7,7 +7,7 @@ const {
 } = require("../utils/cloudinary");
 
 
-const uploadImages = asyncHandler(async (req, res) => {
+const uploadImges = asyncHandler(async (req, res) => {
     try {
       const uploader = (path) => cloudinaryUploadImg(path, "images");
       const urls = [];
@@ -39,7 +39,7 @@ const uploadImages = asyncHandler(async (req, res) => {
     }
   });
 
-  const deleteImages = asyncHandler(async (req, res) => {
+  const deleteImges = asyncHandler(async (req, res) => {
     const {id} = req.params;
     try {
       cloudinaryDeleteImg(id, "images");
@@ -51,6 +51,5 @@ const uploadImages = asyncHandler(async (req, res) => {
   });
 
 module.exports = {
-  uploadImages,
-  deleteImages,
+  deleteImges,uploadImges
 };
