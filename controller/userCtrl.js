@@ -23,7 +23,7 @@ const createUser = asyncHandler(async(req,res)=>{
     }
     else
     {
-        throw new Error("user Already Exists")
+        throw new Error("User Already Exists")
     }
 });
 
@@ -48,8 +48,8 @@ const loginUserCtrl = asyncHandler(async (req, res) => {
     });
     res.json({
       _id: findUser?._id,
-      firstname: findUser?.firstname,
-      lastname: findUser?.lastname,
+      firstName: findUser?.firstName,
+      lastName: findUser?.lastName,
       email: findUser?.email,
       mobile: findUser?.mobile,
       token: generateToken(findUser?._id),
@@ -81,8 +81,8 @@ const loginAdmin = asyncHandler(async (req, res) => {
     });
     res.json({
       _id: findAdmin?._id,
-      firstname: findAdmin?.firstname,
-      lastname: findAdmin?.lastname,
+      firstName: findAdmin?.firstName,
+      lastName: findAdmin?.lastName,
       email: findAdmin?.email,
       mobile: findAdmin?.mobile,
       token: generateToken(findAdmin?._id),
