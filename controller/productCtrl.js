@@ -23,7 +23,7 @@ const createProduct = asyncHandler(async (req, res) => {
 const getaproduct = asyncHandler(async(req,res)=>{
     const {id} = req.params;
     try {
-        const findProduct = await Product.findById(id);
+        const findProduct = await Product.findById(id).populate("color");
         res.json(findProduct);
     } catch (error) {
         throw new Error(error);
