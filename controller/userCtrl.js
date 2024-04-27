@@ -403,6 +403,19 @@ const createOrder = asyncHandler(async(req,res)=>{
   }
 })
 
+
+const getMyOrders = asyncHandler(async(req,res)=>{
+  const {_id} = req.user;
+  try {
+    const orders = await Order.find({user:_id}).populate("user").populate("orderItems.product").populate("orderItems.color");
+    res.json({
+      orders
+    })
+  } catch (error) {
+    throw new Error(error);
+  }
+})
+
 // const emptyCart = asyncHandler(async (req, res) => {
 //   const { _id } = req.user;
 //   validateMongoDbId(_id);
@@ -565,7 +578,7 @@ module.exports = {
                  userCart,
                  getUsercart,
                  createOrder,
-                 
+                 getMyOrders,
                  removeProductFromCart,
                  updateQuantityFromCart
                 };
