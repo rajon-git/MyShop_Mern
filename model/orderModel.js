@@ -7,34 +7,41 @@ var orderSchema = new mongoose.Schema({
         ref: "User",
         required: true
     },
-    shoppingInfo : {
+    shippingInfo : {
         firstName: {
             type: String,
             required: true
+           
         },
         lastName: {
             type: String,
             required: true
+           
         },
-        address: {
+        country: {
             type: String,
             required: true
+           
         },
         city: {
             type: String,
             required: true
+           
         },
         state: {
             type: String,
             required: true
+           
         },
         other: {
             type: String,
             required: true
+           
         },
         pincode: {
             type: Number,
             required: true
+           
         }
     },
     // paymentInfo: {
