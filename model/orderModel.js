@@ -37,15 +37,22 @@ var orderSchema = new mongoose.Schema({
             required: true
         }
     },
+    // paymentInfo: {
+    //     razorpayOrderId: {
+    //         type:String,
+    //         required:true
+    //     },
+    //     razorpayPaymentId: {
+    //         type:String,
+    //         required:true
+    //     }
+    // },
     paymentInfo: {
-        razorpayOrderId: {
-            type:String,
-            required:true
+        method: {
+            type: String,
+            enum: ["cash_on_delivery", "bkash"], // Add more payment methods if needed
+            required: true
         },
-        razorpayPaymentId: {
-            type:String,
-            required:true
-        }
     },
     orderItems: [
         {
