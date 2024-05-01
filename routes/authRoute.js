@@ -21,7 +21,8 @@ const {
     createOrder,
     removeProductFromCart,
     updateQuantityFromCart,
-    getMyOrders
+    getMyOrders,
+    getMonthWiseOrderIncome
 } = require("../controller/userCtrl");
 const {authMiddleware, isAdmin} = require("../middlewares/authMiddleware");
 const { checkout, paymentVerification } = require("../controller/paymentCtrl");
@@ -50,6 +51,7 @@ router.get("/refresh",handleRefreshToken);
 router.get("/logout",logout);
 router.get("/wishlist",authMiddleware, getWishList);
 router.get("/cart",authMiddleware, getUsercart);
+router.get("/getMonthWiseOrderIncome",authMiddleware, getMonthWiseOrderIncome);
 
 
 router.get("/:id",authMiddleware,isAdmin, getaUser);
