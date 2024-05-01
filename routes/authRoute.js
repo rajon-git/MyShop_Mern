@@ -52,7 +52,7 @@ router.get("/getmyorders", authMiddleware, getMyOrders);
 router.get("/refresh",handleRefreshToken);
 router.get("/logout",logout);
 router.get("/wishlist",authMiddleware, getWishList);
-router.get("/cart",authMiddleware, getUsercart);
+router.get("/cart",authMiddleware, getUsercart);  
 router.get("/getMonthWiseOrderIncome",authMiddleware, getMonthWiseOrderIncome);
 router.get("/getYearlyTotalIncome",authMiddleware, getYearlyTotalIncome);
 
