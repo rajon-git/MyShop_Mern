@@ -448,6 +448,38 @@ const getMonthWiseOrderIncome = asyncHandler(async(req,res)=>{
   res.json(data);
 })
 
+const getMonthWiseOrderCount = asyncHandler(async(req,res)=>{
+  let monthNames= ["January","February","March","April","May","June","July",
+            "August","September","October","November","December"];
+  let d = new Date();
+  let endDate = "";
+  d.setDate(1);
+  for (let index = 0; index < 11; index++) {
+    d.setMonth(d.getMonth()-1);
+    endDate = monthNames[d.getMonth()]+ " " + d.getFullYear()
+    
+  }
+  const data = await Order.aggregate([
+    {
+      $match : {
+        createdAt: {
+          $lte:new Date(),
+          $gte: new Date(endDate)
+        }
+      }
+    },
+    {
+      $group: {
+        _id:{
+          month:"$month"
+        },
+        amount:{ $sum:1 }
+      }
+    }
+  ])
+  res.json(data);
+})
+
 // const emptyCart = asyncHandler(async (req, res) => {
 //   const { _id } = req.user;
 //   validateMongoDbId(_id);
@@ -613,5 +645,6 @@ module.exports = {
                  getMyOrders,
                  removeProductFromCart,
                  updateQuantityFromCart,
-                 getMonthWiseOrderIncome
+                 getMonthWiseOrderIncome,
+                 getMonthWiseOrderCount
                 };
