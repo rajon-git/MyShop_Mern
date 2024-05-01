@@ -503,7 +503,8 @@ const getYearlyTotalIncome = asyncHandler(async(req,res)=>{
     {
       $group: {
         _id:null,
-        amount:{ $sum: 1 }
+        count:{ $sum: 1 },
+        amount:{ $sum: "$totalPriceAfterDiscount" }
       }
     }
   ])
