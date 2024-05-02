@@ -482,8 +482,18 @@ const getYearlyTotalIncome = asyncHandler(async(req,res)=>{
 
 const getAllOrders = asyncHandler(async (req, res) => {
   try {
-    const alluserorders = await Order.find();
+    const alluserorders = await Order.find().populate("user");
     res.json(alluserorders);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+const getSingleOrder = asyncHandler(async (req, res) => {
+  const {_id} = req.params;
+  try {
+    const singleuserorder = await Order.findOne({_id:_id});
+    res.json(singleuserorder);
   } catch (error) {
     throw new Error(error);
   }
@@ -570,17 +580,6 @@ const getAllOrders = asyncHandler(async (req, res) => {
 //   }
 // });
 
-// const getAllOrders = asyncHandler(async (req, res) => {
-//   try {
-//     const alluserorders = await Order.find()
-//       .populate("products.product")
-//       .populate("orderby")
-//       .exec();
-//     res.json(alluserorders);
-//   } catch (error) {
-//     throw new Error(error);
-//   }
-// });
 
 // const getOrders = asyncHandler(async (req, res) => {
 //   const { _id } = req.user;
@@ -656,5 +655,6 @@ module.exports = {
                  updateQuantityFromCart,
                  getMonthWiseOrderIncome,
                  getYearlyTotalIncome,
-                 getAllOrders
+                 getAllOrders,
+                 getSingleOrder
                 };
