@@ -511,19 +511,33 @@ const updateOrder = asyncHandler(async (req, res) => {
   }
 });
 
-// const emptyCart = asyncHandler(async (req, res) => {
-//   const { _id } = req.user;
-//   validateMongoDbId(_id);
-//   try {
-//     const user = await User.findOne({ _id });
-//     const cart = await Cart.findOneAndDelete({ orderby: user._id });
-//     res.json(cart);
-//   } catch (error) {
-//     throw new Error(error);
-//   }
-// });
+const applyCoupon = asyncHandler(async (req, res) => {
+  const { coupon } = req.body;
+  const { _id } = req.user;
 
-// //apply coupon
+  // Find the valid coupon
+  const validCoupon = await Coupon.findOne({ name: coupon });
+  if (!validCoupon) {
+    return res.status(400).json({ success: false, message: "Invalid Coupon" });
+  }
+
+  // Get the order associated with the user
+  const order = await Order.findOne({ user: _id });
+  if (!order) {
+    return res.status(404).json({ success: false, message: "Order not found" });
+  }
+
+  // Calculate the discounted total price
+  const discountedTotalPrice = (order.totalPrice - (order.totalPrice * validCoupon.discount) / 100).toFixed(2);
+
+  // Update the order's totalPriceAfterDiscount field
+  order.totalPriceAfterDiscount = discountedTotalPrice;
+  await order.save();
+
+  // Respond with success message and updated order
+  res.status(200).json({ success: true, message: "Coupon applied successfully", order });
+});
+
 
 // const applyCoupon = asyncHandler(async (req, res) => {
 //   const { coupon } = req.body;
@@ -548,6 +562,19 @@ const updateOrder = asyncHandler(async (req, res) => {
 //   );
 //   res.json(totalAfterDiscount);
 // });
+
+// const emptyCart = asyncHandler(async (req, res) => {
+//   const { _id } = req.user;
+//   validateMongoDbId(_id);
+//   try {
+//     const user = await User.findOne({ _id });
+//     const cart = await Cart.findOneAndDelete({ orderby: user._id });
+//     res.json(cart);
+//   } catch (error) {
+//     throw new Error(error);
+//   }
+// });
+
 
 // const createOrder = asyncHandler(async (req, res) => {
 //   const { COD, couponApplied } = req.body;
@@ -669,5 +696,6 @@ module.exports = {
                  getYearlyTotalIncome,
                  getAllOrders,
                  getSingleOrder,
-                 updateOrder
+                 updateOrder,
+                 applyCoupon
                 };
