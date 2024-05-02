@@ -482,10 +482,7 @@ const getYearlyTotalIncome = asyncHandler(async(req,res)=>{
 
 const getAllOrders = asyncHandler(async (req, res) => {
   try {
-    const alluserorders = await Order.find()
-      .populate("products.product")
-      .populate("orderby")
-      .exec();
+    const alluserorders = await Order.find();
     res.json(alluserorders);
   } catch (error) {
     throw new Error(error);
