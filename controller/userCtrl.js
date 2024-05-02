@@ -480,6 +480,18 @@ const getYearlyTotalIncome = asyncHandler(async(req,res)=>{
   res.json(data);
 })
 
+const getAllOrders = asyncHandler(async (req, res) => {
+  try {
+    const alluserorders = await Order.find()
+      .populate("products.product")
+      .populate("orderby")
+      .exec();
+    res.json(alluserorders);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
 // const emptyCart = asyncHandler(async (req, res) => {
 //   const { _id } = req.user;
 //   validateMongoDbId(_id);
@@ -646,5 +658,6 @@ module.exports = {
                  removeProductFromCart,
                  updateQuantityFromCart,
                  getMonthWiseOrderIncome,
-                 getYearlyTotalIncome
+                 getYearlyTotalIncome,
+                 getAllOrders
                 };
