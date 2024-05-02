@@ -8,7 +8,11 @@ const retry = require('retry');
 // });
 
 
-
+cloudinary.config({
+  cloud_name: 'dymsi22vo',
+  api_key: 838447424714893,
+  api_secret: 'VbjsozoAvfKhZrzMtUbpkD2xvNg',
+});
 
 
 const cloudinaryUploadImg = async (fileToUploads) => {

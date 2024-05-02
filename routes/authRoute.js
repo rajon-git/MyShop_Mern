@@ -26,7 +26,8 @@ const {
     getAllOrders,
     getYearlyTotalIncome,
     getSingleOrder,
-    updateOrder
+    updateOrder,
+    applyCoupon
 } = require("../controller/userCtrl");
 const {authMiddleware, isAdmin} = require("../middlewares/authMiddleware");
 const { checkout, paymentVerification } = require("../controller/paymentCtrl");
@@ -44,7 +45,7 @@ router.post("/admin-login",loginAdmin);
 router.post("/cart",authMiddleware, userCart);
 router.post("/order/checkout",authMiddleware, checkout);
 router.post("/order/paymentVerification",authMiddleware, paymentVerification);
-// router.post("/cart/applycoupon",authMiddleware, applyCoupon);
+router.post("/cart/applycoupon",authMiddleware, applyCoupon);
 router.post("/cart/cash-order",authMiddleware, createOrder);
 
 router.get("/all-users",getallUsers);
