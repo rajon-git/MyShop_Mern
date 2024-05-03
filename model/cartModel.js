@@ -21,6 +21,14 @@ var cartSchema = new mongoose.Schema({
    color: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Color"
+   },
+   cartTotal: {
+    type:Number,
+    default: 0
+   },
+   totalAfterDiscount: {
+    type:Number,
+    default: 0
    }
 },
 {

@@ -1,18 +1,14 @@
 const cloudinary = require("cloudinary");
 const retry = require('retry');
 
-// cloudinary.config({
-//   cloud_name: process.env.CLOUD_NAME,
-//   api_key: process.env.API_KEY,
-//   api_secret: process.env.SECRET_KEY,
-// });
-
-
 cloudinary.config({
-  cloud_name: 'dymsi22vo',
-  api_key: 838447424714893,
-  api_secret: 'VbjsozoAvfKhZrzMtUbpkD2xvNg',
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.SECRET_KEY,
 });
+
+
+
 
 
 const cloudinaryUploadImg = async (fileToUploads) => {
