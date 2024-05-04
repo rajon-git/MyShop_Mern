@@ -571,6 +571,26 @@ const applyCoupon = asyncHandler(async (req, res) => {
   res.json({ totalAfterDiscount });
 });
 
+const deleteCoupon = asyncHandler(async (req, res) => {
+  const { couponId } = req.params;
+  
+  // Validate the couponId
+  validateMongoDbId(couponId);
+
+  // Find the coupon by its ID
+  const coupon = await Coupon.findById(couponId);
+
+  if (!coupon) {
+    throw new Error("Coupon not found.");
+  }
+
+  // Delete the coupon
+  await coupon.remove();
+
+  res.json({ message: "Coupon deleted successfully." });
+});
+
+
 
 const emptyCart = asyncHandler(async (req, res) => {
   const { _id } = req.user;
@@ -706,5 +726,6 @@ module.exports = {
                  getSingleOrder,
                  updateOrder,
                  applyCoupon,
-                 emptyCart
+                 emptyCart,
+                 deleteCoupon
                 };

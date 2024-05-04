@@ -1,11 +1,11 @@
 const cloudinary = require("cloudinary");
 const retry = require('retry');
 
-cloudinary.config({
-  cloud_name: process.env.CLOUD_NAME,
-  api_key: process.env.API_KEY,
-  api_secret: process.env.SECRET_KEY,
-});
+// cloudinary.config({
+//   cloud_name: process.env.CLOUD_NAME,
+//   api_key: process.env.API_KEY,
+//   api_secret: process.env.SECRET_KEY,
+// });
 
 
 
