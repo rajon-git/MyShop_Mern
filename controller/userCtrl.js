@@ -556,10 +556,10 @@ const applyCoupon = asyncHandler(async (req, res) => {
   for (const cartItem of userCart) {
     cartTotal = cartTotal+ cartItem.cartTotal
   }
-  console.log(validCoupon.discount)
 
   // Calculate the total price after discount
-  const totalAfterDiscount = (cartTotal - validCoupon.discount).toFixed(2);
+  const totalAfterDiscount = (cartTotal - validCoupon.discount);
+  console.log(totalAfterDiscount);
 
   // Update the totalAfterDiscount field in the cart model for the user
   await Cart.updateMany(

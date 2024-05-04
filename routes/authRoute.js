@@ -69,7 +69,7 @@ router.delete("/delete-product-cart/:cartItemId",authMiddleware, removeProductFr
 router.delete("/update-product-cart/:cartItemId/:newQuantity",authMiddleware, updateQuantityFromCart);
 // router.delete("/empty-cart",authMiddleware, emptyCart);
 
-uter.delete("/coupon/:couponId", deleteCoupon);
+router.delete("/coupon/:couponId", deleteCoupon);
 router.delete("/empty",authMiddleware,emptyCart);
 router.delete("/:id",deleteUser);
 
