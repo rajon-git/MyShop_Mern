@@ -60,8 +60,8 @@ router.get("/refresh",handleRefreshToken);
 router.get("/logout",logout);
 router.get("/wishlist",authMiddleware, getWishList);
 router.get("/cart",authMiddleware, getUsercart);  
-router.get("/getMonthWiseOrderIncome",authMiddleware, getMonthWiseOrderIncome);
-router.get("/getYearlyTotalIncome",authMiddleware, getYearlyTotalIncome);
+router.get("/getMonthWiseOrderIncome",authMiddleware,isAdmin, getMonthWiseOrderIncome);
+router.get("/getYearlyTotalIncome",authMiddleware,isAdmin, getYearlyTotalIncome);
 
 
 router.get("/:id",authMiddleware,isAdmin, getaUser);
