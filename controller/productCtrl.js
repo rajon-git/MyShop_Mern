@@ -231,7 +231,7 @@ const updateProduct = asyncHandler(async (req, res) => {
     }
   });
 
-
+  
 
   const rating = asyncHandler(async (req, res) => {
     const { _id } = req.user;
@@ -261,7 +261,7 @@ const updateProduct = asyncHandler(async (req, res) => {
               ratings: {
                 star: star,
                 comment: comment,
-                postedby: _id,
+                postedby: _id, // Assuming _id is the user's ID
               },
             },
           },
@@ -270,12 +270,13 @@ const updateProduct = asyncHandler(async (req, res) => {
           }
         );
       }
-      const getallratings = await Product.findById(prodId);
+      const getallratings = await Product.findById(prodId).populate('ratings?.postedby');
       let totalRating = getallratings.ratings.length;
       let ratingsum = getallratings.ratings
         .map((item) => item.star)
         .reduce((prev, curr) => prev + curr, 0);
       let actualRating = Math.round(ratingsum / totalRating);
+      
       let finalproduct = await Product.findByIdAndUpdate(
         prodId,
         {
@@ -289,6 +290,7 @@ const updateProduct = asyncHandler(async (req, res) => {
     }
   });
 
+  
   // const uploadImges=asyncHandler(async(req,res)=>{
   //   const {id} = req.params;
   //   validateMongoDbId(id);
