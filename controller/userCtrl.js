@@ -11,7 +11,9 @@ const Cart = require("../model/cartModel");
 const Coupon = require("../model/couponModel");
 const Order = require("../model/orderModel");
 const uniqid =require("uniqid");
-const { Console } = require("console");
+const OTP = require("../model/otpModel")
+
+const SendEmailUtility = require("../utils/SMTPEmail")
 
 const createUser = asyncHandler(async(req,res)=>{
     const email = req.body.email;
@@ -320,6 +322,83 @@ const resetPassword = asyncHandler(async (req, res) => {
   await user.save();
   res.json(user);
 });
+
+const RecoverVerifyEmail = asyncHandler(async (req, res) => {
+  let email = req.params.email;
+  let OTPCODE = Math.floor(100000 + Math.random() * 900000);
+  // console.log(OTP)
+  try {
+    let userCount = await User.aggregate([
+      { $match: { email } },
+      { $count: "total" },
+    ]);
+    if (userCount.length > 0) {
+      await OTP.create({ email, otp: OTPCODE });
+      // Email Send
+      let SendEmail = await SendEmailUtility(
+        email,
+        OTPCODE,
+        "Task Manager PIN Verification"
+      );
+      res.status(200).json({ status: "success", data: SendEmail });
+    } else {
+      res.status(200).json({ status: "fail", data: "User Not Found" });
+    }
+  } catch (error) {
+    // console.log(error);
+    res.status(400).json({ status: "fail=", error: error.message });
+  }
+})
+
+// Recover Verify OTP
+const VerifyOTP = asyncHandler(async (req, res) => {
+  let email = req.params.email;
+  let otp = req.params.otp;
+  let status = 0;
+  let updateStatus = 1;
+
+  try {
+    let otpCount = await OTP.aggregate([
+      { $match: { email, otp, status } },
+      { $count: "total" },
+    ]);
+
+    if (otpCount.length > 0) {
+      let OTPUpdate = await OTP.updateOne(
+        { email, otp, status },
+        { status: updateStatus }
+      );
+      res.status(200).json({ status: "success", data: OTPUpdate });
+    } else {
+      res.status(400).json({ status: "fail", data: "Invalid OTP" });
+    }
+  } catch (error) {
+    // console.log(error);
+    res.status(400).json({ status: "fail", error: error.message });
+  }
+})
+
+// Reset Password
+const ResetPassword = asyncHandler(async (req, res) => {
+  let { email, otp, password } = req.body;
+  let status = 1;
+  try {
+    let otpCount = await OTP.aggregate([
+      { $match: { email, otp, status } },
+      { $count: "total" },
+    ]);
+
+    if (otpCount.length > 0) {
+      let updatePass = await User.updateOne({ email }, { password });
+      res.status(200).json({ status: "success", data: updatePass });
+    } else {
+      res.status(200).json({ status: "fail", data: "Invalid Request" });
+    }
+  } catch (error) {
+    // console.log(error);
+    res.status(400).json({ status: "fail", error: error.message });
+  }
+})
 
 const getWishList = asyncHandler(async(req,res)=>{
   const {_id} = req.user;
@@ -636,5 +715,8 @@ module.exports = {
                  updateOrder,
                  applyCoupon,
                  emptyCart,
-                 deleteCoupon
+                 deleteCoupon,
+                 ResetPassword,
+                 VerifyOTP,
+                 RecoverVerifyEmail
                 };
