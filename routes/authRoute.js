@@ -29,7 +29,10 @@ const {
     updateOrder,
     applyCoupon,
     emptyCart,
-    deleteCoupon
+    deleteCoupon,
+    ResetPassword,
+    VerifyOTP,
+    RecoverVerifyEmail
 } = require("../controller/userCtrl");
 const {authMiddleware, isAdmin} = require("../middlewares/authMiddleware");
 const { checkout, paymentVerification } = require("../controller/paymentCtrl");
@@ -49,6 +52,11 @@ router.post("/order/checkout",authMiddleware, checkout);
 router.post("/order/paymentVerification",authMiddleware, paymentVerification);
 router.post("/cart/applycoupon",authMiddleware, applyCoupon);
 router.post("/cart/cash-order",authMiddleware, createOrder);
+
+// Forget Password router
+router.get("/verifyEmail/:email", RecoverVerifyEmail);
+router.get("/verifyOtp/:email/:otp", VerifyOTP);
+router.post("/resetPassword", ResetPassword);
 
 router.get("/all-users",getallUsers);
 router.get("/getmyorders", authMiddleware, getMyOrders);
