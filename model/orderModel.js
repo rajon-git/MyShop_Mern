@@ -57,7 +57,7 @@ var orderSchema = new mongoose.Schema({
     paymentInfo: {
         method: {
             type: String,
-            enum: ["cash_on_delivery", "bkash"], // Add more payment methods if needed
+            enum: ["cash_on_delivery", "online_payment"], // Add more payment methods if needed
             required: true
         },
     },

@@ -436,6 +436,7 @@ const userCart = asyncHandler(async (req, res) => {
   validateMongoDbId(_id);
   try {
     const cartTotal = price * quantity;
+    console.log(cartTotal);
     let newCart = await new Cart({
       userId: _id,
       productId,
@@ -482,6 +483,7 @@ const updateQuantityFromCart=asyncHandler(async(req,res)=>{
   try {
     const cartItem = await Cart.findOne({userId:_id,_id:cartItemId});
     cartItem.quantity = newQuantity;
+    cartItem.cartTotal = cartItem.price * newQuantity;
     cartItem.save();
     res.json(cartItem);
   } catch (error) {
@@ -621,8 +623,14 @@ const applyCoupon = asyncHandler(async (req, res) => {
   
   // Find the valid coupon
   const validCoupon = await Coupon.findOne({ name: coupon });
+
   if (!validCoupon) {
     throw new Error("Invalid Coupon");
+  }
+
+  // Check if the coupon is expired
+  if (validCoupon.expiryDate < new Date()) {
+    throw new Error("Coupon has expired");
   }
 
   // Find the user's cart
@@ -636,22 +644,27 @@ const applyCoupon = asyncHandler(async (req, res) => {
 
   // Calculate total price of all products in the cart
   for (const cartItem of userCart) {
-    cartTotal = cartTotal+ cartItem.cartTotal
+    cartTotal += cartItem.cartTotal;
   }
 
   // Calculate the total price after discount
-  const totalAfterDiscount = (cartTotal - validCoupon.discount);
-  console.log(totalAfterDiscount);
+  const totalAfterDiscount = cartTotal - validCoupon.discount;
+  
+  if (totalAfterDiscount < 0) {
+    throw new Error("Coupon discount is greater than cart total.");
+  }
 
   // Update the totalAfterDiscount field in the cart model for the user
   await Cart.updateMany(
     { userId: _id },
-    { totalAfterDiscount },
+    { $set: { totalAfterDiscount } },
     { new: true }
   );
 
   res.json({ totalAfterDiscount });
 });
+
+
 
 const deleteCoupon = asyncHandler(async (req, res) => {
   const { couponId } = req.params;
